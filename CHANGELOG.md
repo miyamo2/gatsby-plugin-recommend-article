@@ -1,4 +1,6 @@
-# Changelog
+# 0.1.3 - 2025-01-14
+
+Update package meta-information only
 
 ## 0.1.2 - 2025-01-14
 
