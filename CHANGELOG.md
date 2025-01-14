@@ -1,3 +1,7 @@
+## 0.1.5 - 2025-01-14
+
+license information is now clearly written.
+
 ## 0.1.4 - 2025-01-14
 
 Update package meta-information only
