@@ -1,0 +1,67 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+    paths: ["CHANGELOG.md"]
+jobs:
+  publish:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    permissions: write-all
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Extract Version
+        id: versioning
+        run: |
+          VERSION="v$(sed -n 's/##\s\([0-9.]*\)\s.*/\1/p' CHANGELOG.md | head -1)"
+          echo ::set-output name=version::$VERSION
+
+      - name: Overwrite version in package.json
+        run: |
+          echo $(jq ".version=\"${{ steps.versioning.outputs.version }}\"" package.json) > package.json
+          git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add package.json
+          git commit -m "chore(package.json): bump version to ${{ steps.drafter.outputs.resolved_version }}"
+          git push origin HEAD:main
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install
+
+      - run: bun publish
+        env:
+          NPM_CONFIG_TOKEN: ${{ secrets.NPM_TOKEN }}
+          NPM_CONFIG_REGISTRY: "https://registry.npmjs.org/"
+
+      - name: Extract changes from prev version
+        run: |
+          git fetch --prune --unshallow
+          PRETAG=$(git tag --sort -v:refname | head -1)
+          CURRENTTAG=${{ steps.versioning.outputs.version }}
+          echo "## What's Changed in ${CURRENTTAG}" > diff-changelog.txt
+          if [ -z "$PRETAG" ]
+          then
+            cat CHANGELOG.md | sed -e 's/##\s[0-9.]*\s.*//g' >> diff-changelog.txt
+          else
+            git diff $PRETAG..${{ github.sha }} -- CHANGELOG.md | grep -E '^\+' | grep -v '+++' | sed -e 's/^\+//g' | sed -e 's/##\s[0-9.]*\s.*//g' | sed -e '/^$/d' >> diff-changelog.txt
+            echo "" >> diff-changelog.txt
+            echo "**Full Changelog**: https://github.com/miyamo2/gatsby-plugin-recommend-article/compare/${PRETAG}...${CURRENTTAG}" >> diff-changelog.txt
+          fi
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.versioning.outputs.version }}
+          generate_release_notes: false
+          body_path: diff-changelog.txt
+
