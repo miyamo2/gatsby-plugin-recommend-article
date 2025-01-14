@@ -1,6 +1,6 @@
 {
   "name": "gatsby-plugin-recommend-article",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "Gatsby plugin to recommend articles based on OpenAI embeddings and Qdrant vector search.",
   "keywords": [
     "gatsby",
