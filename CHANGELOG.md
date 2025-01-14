@@ -1,4 +1,4 @@
-# 0.1.3 - 2025-01-14
+## 0.1.3 - 2025-01-14
 
 Update package meta-information only
 
