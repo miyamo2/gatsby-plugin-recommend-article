@@ -25,7 +25,7 @@ jobs:
 
       - name: Overwrite version in package.json
         run: |
-          echo $(jq ".version=\"${{ steps.versioning.outputs.version }}\"" package.json) > package.json
+          echo $(jq ".version=\"${{ steps.versioning.outputs.version }}\"" package.json)  | jq . > package.json
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add package.json
