@@ -28,13 +28,16 @@ jobs:
           echo ::set-output name=version::$VERSION
 
       - name: Overwrite version in package.json
+        id: bump_package_json
         run: |
           echo $(jq ".version=\"${{ steps.versioning.outputs.version }}\"" package.json) > package.json
           bunx prettier --write .
           git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add package.json
-          git commit -m "chore(package.json): bump version to ${{ steps.drafter.outputs.resolved_version }}"
+          git commit -m "chore(package.json): bump version to ${{ steps.versioning.outputs.version }}"
+          COMMIT_HASH=$(git rev-parse HEAD)
+          echo ::set-output name=target_commit::$COMMIT_HASH
           git push origin HEAD:main
 
       - name: Install dependencies
@@ -65,3 +68,4 @@ jobs:
           tag_name: ${{ format('v{0}', steps.versioning.outputs.version) }}
           generate_release_notes: false
           body_path: diff-changelog.txt
+          target_commitish: ${{ steps.bump_package_json.outputs.target_commit }}
