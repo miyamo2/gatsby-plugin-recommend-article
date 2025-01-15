@@ -106,13 +106,13 @@ query {
 
 ## Options
 
-| Name      | Type     | Description                                                                                               | Default                                   | Required |
-|-----------|----------|-----------------------------------------------------------------------------------------------------------|-------------------------------------------|----------|
-| qdrant    | object   | Configuration for Qdrant.                                                                                 | -                                         | ✅        |
-| openai    | object   | Configuration for OpenAI.                                                                                 | -                                         | ❌        |
-| limit     | number   | Maximum number of recommended articles.                                                                   | 5                                         | ❌        |
-| nodeType  | string   | Type of node to add `recommends` field. Also, the type of `recommends` is an array of the specified type. | "MarkdownRemark"                          | ❌        |
-| toPayload | function | Function to convert node to payload. payload is only used to generate vector.                             | `({ node }) => { content: node.excerpt }` | ❌        |
+| Name      | Type     | Description                                                                                               | Default                                                  | Required |
+|-----------|----------|-----------------------------------------------------------------------------------------------------------|----------------------------------------------------------|----------|
+| qdrant    | object   | Configuration for Qdrant.                                                                                 | -                                                        | ✅        |
+| openai    | object   | Configuration for OpenAI.                                                                                 | -                                                        | ❌        |
+| limit     | number   | Maximum number of recommended articles.                                                                   | 5                                                        | ❌        |
+| nodeType  | string   | Type of node to add `recommends` field. Also, the type of `recommends` is an array of the specified type. | "MarkdownRemark"                                         | ❌        |
+| toPayload | function | Function to convert node to payload. payload is only used to generate vector.                             | `(node) => JSON.stringify({ body: node.excerpt ?? "" })` | ❌        |
 
 ### qdrant
 
