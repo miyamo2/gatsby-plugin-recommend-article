@@ -1,3 +1,7 @@
+## 0.1.6 - 2025-01-18
+
+📚 few fixes in doc
+
 ## 0.1.5 - 2025-01-14
 
 license information is now clearly written.
